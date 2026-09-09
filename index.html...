@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ARQUIVO 000005</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:#000;
+  color:#aaa;
+  font-family:"Courier New",monospace;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  overflow:hidden;
+}
+
+#screen{
+  width:90%;
+  max-width:700px;
+}
+
+h1{
+  color:#eee;
+  font-size:clamp(30px,8vw,65px);
+  letter-spacing:5px;
+  text-shadow:0 0 20px white;
+  animation:glitch 2s infinite;
+}
+
+p{
+  font-size:18px;
+  line-height:1.8;
+}
+
+button{
+  margin-top:25px;
+  padding:14px 28px;
+  background:#050505;
+  border:1px solid #666;
+  color:#fff;
+  font-family:inherit;
+  cursor:pointer;
+}
+
+#secret{
+  display:none;
+  margin-top:30px;
+  color:#eee;
+}
+
+@keyframes glitch{
+  0%,90%,100%{transform:translate(0)}
+  92%{transform:translate(-4px,2px)}
+  95%{transform:translate(4px,-2px)}
+}
+
+@keyframes blink{
+  50%{opacity:.2}
+}
+</style>
+</head>
+
+<body>
+
+<div id="screen">
+
+  <h1>ARQUIVO 000005</h1>
+
+  <p id="text">
+    Você chegou ao segundo arquivo.
+  </p>
+
+  <button onclick="next()">
+    CONTINUAR
+  </button>
+
+  <div id="secret">
+    ELE NÃO ESTÁ ATRÁS DE VOCÊ.<br><br>
+    ELE ESTÁ NO PRIMEIRO SITE.
+  </div>
+
+</div>
+
+<script>
+
+let step=0;
+
+function next(){
+
+  step++;
+
+  const text=document.getElementById("text");
+  const secret=document.getElementById("secret");
+
+  if(step===1){
+
+    text.innerText=
+      "Você achou que tinha terminado.";
+
+  }
+
+  else if(step===2){
+
+    text.innerText=
+      "Mas o primeiro arquivo ainda está aberto.";
+
+  }
+
+  else if(step===3){
+
+    text.innerText=
+      "Agora ele sabe que você encontrou o segundo.";
+
+  }
+
+  else if(step===4){
+
+    text.innerText=
+      "Não feche esta página.";
+
+    secret.style.display="block";
+
+  }
+
+}
+
+</script>
+
+</body>
+</html>
