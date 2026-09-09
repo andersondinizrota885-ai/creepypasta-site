@@ -1,1 +1,729 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VISITANTE 000001</title>
 
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: #000;
+  color: #eee;
+  font-family: "Courier New", monospace;
+}
+
+body {
+  overflow: hidden;
+}
+
+/* navegador falso */
+.browser {
+  height: 55px;
+  background: #111;
+  border-bottom: 1px solid #333;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  gap: 10px;
+}
+
+.dots {
+  display: flex;
+  gap: 5px;
+}
+
+.dot {
+  width: 11px;
+  height: 11px;
+  background: #555;
+  border-radius: 50%;
+}
+
+.url {
+  flex: 1;
+  height: 35px;
+  border: 1px solid #333;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  color: #777;
+  font-size: 11px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* tela */
+#main {
+  min-height: calc(100vh - 55px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 25px;
+  position: relative;
+}
+
+#content {
+  width: 100%;
+  max-width: 700px;
+}
+
+.status {
+  color: #666;
+  font-size: 12px;
+  letter-spacing: 4px;
+  margin-bottom: 30px;
+  animation: blink 1.5s infinite;
+}
+
+h1 {
+  font-size: clamp(28px, 8vw, 65px);
+  margin-bottom: 30px;
+  letter-spacing: 4px;
+  text-shadow: 0 0 15px white;
+}
+
+.glitch {
+  animation: glitch 2s infinite;
+}
+
+@keyframes glitch {
+  0%,90%,100% {
+    transform: translate(0);
+  }
+
+  92% {
+    transform: translate(-4px,2px);
+  }
+
+  94% {
+    transform: translate(4px,-2px);
+  }
+}
+
+#message {
+  min-height: 80px;
+  font-size: clamp(16px,4vw,23px);
+  line-height: 1.7;
+  color: #ccc;
+}
+
+.counter {
+  margin-top: 30px;
+  color: #777;
+}
+
+.counter span {
+  color: white;
+}
+
+button {
+  margin-top: 30px;
+  padding: 14px 30px;
+  background: transparent;
+  color: white;
+  border: 1px solid #777;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:hover {
+  box-shadow: 0 0 20px #777;
+}
+
+/* linhas */
+#scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 20;
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 3px,
+      rgba(255,255,255,.04) 4px
+    );
+}
+
+/* terminal */
+#terminal {
+  display: none;
+  position: fixed;
+  left: 15px;
+  bottom: 15px;
+  width: calc(100% - 30px);
+  max-width: 450px;
+  padding: 15px;
+  background: rgba(0,0,0,.9);
+  border: 1px solid #333;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: left;
+  z-index: 30;
+}
+
+/* telas */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 50;
+}
+
+/* câmera */
+.camera {
+  width: 90%;
+  max-width: 650px;
+  height: 350px;
+  border: 1px solid #555;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #050505 0px,
+      #050505 3px,
+      #151515 4px
+    );
+
+  animation: camera .15s infinite;
+}
+
+@keyframes camera {
+  0% { transform: translate(0); }
+  50% { transform: translate(2px,-1px); }
+  100% { transform: translate(-1px,1px); }
+}
+
+.camInfo {
+  position: absolute;
+  color: #777;
+  font-size: 12px;
+}
+
+.camTop {
+  top: 10px;
+  left: 10px;
+}
+
+.camTime {
+  top: 10px;
+  right: 10px;
+}
+
+.camRec {
+  bottom: 10px;
+  left: 10px;
+}
+
+.camText {
+  color: #666;
+  animation: blink 1s infinite;
+}
+
+/* porta */
+.door {
+  width: 180px;
+  height: 330px;
+  border: 4px solid #222;
+  background: #050505;
+  box-shadow: 0 0 70px #222;
+  position: relative;
+}
+
+.handle {
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  background: #aaa;
+  border-radius: 50%;
+}
+
+.doorText {
+  margin-top: 25px;
+  color: #777;
+  letter-spacing: 5px;
+}
+
+/* entidade */
+#entityOverlay {
+  background:
+    radial-gradient(
+      circle,
+      #151515 0%,
+      #000 65%
+    );
+}
+
+.entity {
+  width: 230px;
+  height: 370px;
+  position: relative;
+  animation: entity 2s infinite;
+}
+
+.head {
+  width: 130px;
+  height: 150px;
+  margin: auto;
+  background: #020202;
+  border-radius: 50%;
+  box-shadow: 0 0 50px #222;
+  position: relative;
+}
+
+.eye {
+  position: absolute;
+  top: 65px;
+  width: 18px;
+  height: 18px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 20px white;
+  animation: eyeBlink 3s infinite;
+}
+
+.eye1 {
+  left: 30px;
+}
+
+.eye2 {
+  right: 30px;
+}
+
+.body {
+  width: 190px;
+  height: 230px;
+  margin: -5px auto;
+  background: #020202;
+  border-radius: 45% 45% 10% 10%;
+  box-shadow: 0 0 60px #111;
+}
+
+@keyframes entity {
+  0%,100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes eyeBlink {
+  0%,90%,100% {
+    opacity: 1;
+  }
+
+  95% {
+    opacity: .1;
+  }
+}
+
+.entityTitle {
+  font-size: clamp(28px,7vw,60px);
+  letter-spacing: 5px;
+  text-shadow: 0 0 20px white;
+  animation: shake .2s infinite;
+}
+
+.finalText {
+  margin-top: 15px;
+  color: #777;
+}
+
+@keyframes shake {
+  0%,100% {
+    transform: translate(0);
+  }
+
+  50% {
+    transform: translate(2px,-1px);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: .2;
+  }
+}
+
+@media(max-width:600px) {
+  .browser {
+    height: 50px;
+  }
+
+  #main {
+    min-height: calc(100vh - 50px);
+  }
+
+  .camera {
+    height: 260px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="browser">
+
+  <div class="dots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="url">
+    https://site-que-nao-existia.dark/visitante-000001
+  </div>
+
+</div>
+
+<div id="main">
+
+  <div id="content">
+
+    <div class="status">
+      CONEXÃO DESCONHECIDA
+    </div>
+
+    <h1 class="glitch">
+      BEM-VINDO DE VOLTA.
+    </h1>
+
+    <div id="message">
+      Você nunca esteve aqui.
+    </div>
+
+    <div class="counter">
+      VISITANTE Nº
+      <span id="number">000001</span>
+    </div>
+
+    <button id="button">
+      ENTRAR
+    </button>
+
+  </div>
+
+</div>
+
+<div id="scanlines"></div>
+
+<div id="terminal">
+  &gt; procurando usuário...<br>
+  &gt; conexão instável...<br>
+  &gt; câmera: bloqueada<br>
+  &gt; localização: desconhecida<br>
+  &gt; visitante encontrado...
+</div>
+
+<div id="cameraOverlay" class="overlay">
+
+  <div class="camera">
+
+    <div class="camInfo camTop">
+      CAMERA // OFFLINE
+    </div>
+
+    <div class="camInfo camTime">
+      03:17
+    </div>
+
+    <div class="camText">
+      SINAL DESCONHECIDO...
+    </div>
+
+    <div class="camInfo camRec">
+      REC ●
+    </div>
+
+  </div>
+
+</div>
+
+<div id="doorOverlay" class="overlay">
+
+  <div class="door">
+    <div class="handle"></div>
+  </div>
+
+  <div class="doorText">
+    NÃO ABRA.
+  </div>
+
+</div>
+
+<div id="entityOverlay" class="overlay">
+
+  <div class="entity">
+
+    <div class="head">
+      <div class="eye eye1"></div>
+      <div class="eye eye2"></div>
+    </div>
+
+    <div class="body"></div>
+
+  </div>
+
+  <h2 class="entityTitle">
+    ELE VIU VOCÊ.
+  </h2>
+
+  <div class="finalText">
+    VISITANTE Nº 000004
+  </div>
+
+</div>
+
+<script>
+
+const message = document.getElementById("message");
+const number = document.getElementById("number");
+const button = document.getElementById("button");
+
+const terminal = document.getElementById("terminal");
+const cameraOverlay = document.getElementById("cameraOverlay");
+const doorOverlay = document.getElementById("doorOverlay");
+const entityOverlay = document.getElementById("entityOverlay");
+
+let stage = 0;
+let audio = null;
+
+function startAudio() {
+
+  if (audio) return;
+
+  audio = new AudioContext();
+
+  const osc = audio.createOscillator();
+  const gain = audio.createGain();
+
+  osc.frequency.value = 50;
+  gain.gain.value = 0.025;
+
+  osc.connect(gain);
+  gain.connect(audio.destination);
+
+  osc.start();
+}
+
+function beep() {
+
+  if (!audio) return;
+
+  const osc = audio.createOscillator();
+  const gain = audio.createGain();
+
+  osc.type = "square";
+  osc.frequency.value = 180;
+  gain.gain.value = 0.08;
+
+  osc.connect(gain);
+  gain.connect(audio.destination);
+
+  osc.start();
+
+  setTimeout(() => {
+    osc.stop();
+  },150);
+}
+
+function wait(ms) {
+
+  return new Promise(resolve => {
+    setTimeout(resolve,ms);
+  });
+
+}
+
+function typeText(text) {
+
+  return new Promise(resolve => {
+
+    message.textContent = "";
+
+    let i = 0;
+
+    const timer = setInterval(() => {
+
+      message.textContent += text[i];
+
+      i++;
+
+      if(i >= text.length) {
+
+        clearInterval(timer);
+        resolve();
+
+      }
+
+    },35);
+
+  });
+
+}
+
+async function story() {
+
+  startAudio();
+
+  button.disabled = true;
+
+  stage++;
+
+  if(stage === 1) {
+
+    beep();
+
+    number.textContent = "000002";
+
+    await typeText(
+      "Você clicou em ENTRAR."
+    );
+
+    await wait(1200);
+
+    await typeText(
+      "Mas este site já estava esperando por você."
+    );
+
+    button.disabled = false;
+    button.textContent = "CONTINUAR";
+  }
+
+  else if(stage === 2) {
+
+    beep();
+
+    terminal.style.display = "block";
+
+    number.textContent = "000003";
+
+    await typeText(
+      "NÃO ATUALIZE A PÁGINA."
+    );
+
+    await wait(1500);
+
+    await typeText(
+      "Visitante nº 000003 entrou com você."
+    );
+
+    await wait(1500);
+
+    await typeText(
+      "Mas você está sozinho."
+    );
+
+    button.disabled = false;
+  }
+
+  else if(stage === 3) {
+
+    beep();
+
+    await typeText(
+      "O site encontrou uma câmera."
+    );
+
+    await wait(1500);
+
+    cameraOverlay.style.display = "flex";
+
+    await wait(4000);
+
+    cameraOverlay.style.display = "none";
+
+    await typeText(
+      "A câmera estava desligada."
+    );
+
+    await wait(1500);
+
+    await typeText(
+      "Então quem estava olhando?"
+    );
+
+    button.disabled = false;
+  }
+
+  else if(stage === 4) {
+
+    beep();
+
+    await typeText(
+      "Há uma porta atrás de você."
+    );
+
+    await wait(1800);
+
+    doorOverlay.style.display = "flex";
+
+    await wait(3500);
+
+    doorOverlay.style.display = "none";
+
+    await typeText(
+      "Você não tem uma porta aí."
+    );
+
+    await wait(1500);
+
+    await typeText(
+      "Mas alguém está do outro lado."
+    );
+
+    button.disabled = false;
+  }
+
+  else if(stage === 5) {
+
+    beep();
+
+    await typeText("03:17");
+
+    await wait(1500);
+
+    await typeText(
+      "Visitante nº 000004."
+    );
+
+    await wait(2000);
+
+    entityOverlay.style.display = "flex";
+
+    beep();
+  }
+
+}
+
+button.addEventListener("click",story);
+
+</script>
+
+</body>
+</html>
